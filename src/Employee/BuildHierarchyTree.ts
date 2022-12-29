@@ -1,57 +1,82 @@
-export class Employee {
-    id: string;
-    name: string;
-    managerId: any;
-    subordinates: any;
-    constructor(id:any, name:string, managerId:any) {
-        this.id = id;
-        this.name = name;
-        this.managerId = managerId;
-        this.subordinates = {};
-    }
-}
+import { IEmployee } from './../types/employee';
+import { Employee } from './index';
+
 export class BuildHierarchyTree {
-    employees :any =  new Map();
-    root : any ;
-    readDataAndCreateMap(lines:String[])  {        		
-		for (const strLine of lines) { 			
-			var values = strLine.split(" ");
-            var employee;
-			if (values.length >= 4)  						
-				employee = new Employee(values[0], values[1] + " " + values[2], values[3]);		          
-			else 
-				employee = new Employee(values[0], values[1] + " " + values[2], "0");		
-			this.employees.set(employee.id, employee);
-			if (employee.managerId == 0) 
-                this.root = employee;
-		}
-        console.log(this.employees.size);
-	}
-    getSubsById(managerId:number) {
-        var subs = new Array();
+    employees: Map<number, IEmployee> = new Map();
+    root: any;
+    getSubsById(supervisorID: number) {
+        var subs: IEmployee[] = [];
         for (const em of this.employees.values()) {
-            if (+em.managerId === managerId) 
+            if (+em.supervisorID === supervisorID)
                 subs.push(em);
         }
         return subs;
-   }
-    buildHierarchyTree(root:Employee) {
-        var employee = root;
-        var subs = this.getSubsById(+employee.id);
-        employee.subordinates = subs;
-        if (subs.length == 0)
-            return;
-        for (const em of subs) 
-           this.buildHierarchyTree(em);
-    }	
-    printHierarchyTree(root:Employee, level:number) {
-        var str = "";
-        for (let i = 0; i < level; i++) 
-            str += "\t";
-        str += root.name	 
-        console.log(str);		 
-        var subs = root.subordinates;
-        for (const em of subs) 
-            this.printHierarchyTree(em, level+1);
     }
+    
+
+    readDataAndCreateMap(lines: any) {
+        for (const items of lines) {
+            const values: Array<any> = items;
+            let employee: IEmployee;
+            if (values.length >= 3)
+                employee = new Employee(values[0], values[1], values[2], this.getSubsById(+values[2]));
+            else
+                employee = new Employee(+values[0], values[1], 0, this.getSubsById(+values[values.length - 1]));
+            this.employees.set(+employee.id, employee);
+            if (+employee.supervisorID === 0)
+                this.root = employee;
+        }
+        return this.employees.values();
+
+    }
+
+    buildHierarchyTree(root: IEmployee) {
+        var employee: IEmployee = root;
+        var subs: IEmployee[] = this.getSubsById(+employee.id);
+        employee.children = subs;
+        if (subs.length === 0)
+            return;
+        for (const em of subs)
+            this.buildHierarchyTree(em);
+    }
+    printHierarchyTree(root: IEmployee, level: number) {
+        var str: String = "";
+        for (let i = 0; i < level; i++)
+            str += "\t";
+        str += root.text
+        // console.log(str);
+        var subs = root.children;
+        for (const em of subs)
+            this.printHierarchyTree(em, level + 1);
+    }
+
+   
+    move(items:any,employeeID: number, supervisorID: Number): void {
+        const emp = items.filter((item:[Number,String,Number]) => item[0]===employeeID);
+        items.splice(items.indexOf(emp),1)
+        items.push([employeeID,emp[0][1],supervisorID])
+        return items
+    }
+    
+
+    // createUiOfHierarchy(root: IEmployee, level: number) {
+    //     const list: String[] = [];
+    //     var str: String = "";
+    //     for (let i = 0; i < level; i++) {
+    //         str += "\t";
+    //         if(level===1){
+    //             str += "<ul>";
+    //         }
+    //         if (i === level - 1) {
+    //             str += "<li>";
+    //         }
+    //     }
+    //         str += root.name
+    //         // str += "</li>";
+    //         // str += "</ul>";
+    //         console.log(str);
+    //         const subs = root.children;
+    //         for (const em of subs)
+    //             this.createUiOfHierarchy(em, level + 1);
+    //     }
 }

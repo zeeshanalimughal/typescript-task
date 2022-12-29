@@ -1,11 +1,16 @@
 export interface IEmployee {
-    uniqueId: number;
-    name: string;
-    subordinates: IEmployee[];
+    id: number;
+    text: string;
+    supervisorID: number;
+    children: IEmployee[];
 }
-export interface IEmployeeOrgApp {
-    ceo: IEmployee;
-    move(employeeID: number, supervisorID: number): void;
+export  interface IEmployeeOrgApp {
+    id: number;
+    text: string;
+    supervisorID: number;
+    children: IEmployee[];
+
+    move(items:any,employeeID: number, supervisorID: number): void;
     /** Undo last move action */
     undo(): void;
     /** Redo last undone action */
