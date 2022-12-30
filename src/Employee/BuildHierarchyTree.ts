@@ -1,7 +1,9 @@
 import { IEmployee } from './../types/employee';
+import { History } from './History';
 import { Employee } from './index';
 
 export class BuildHierarchyTree {
+    history = new History()
     employees: Map<number, IEmployee> = new Map();
     root: any;
     getSubsById(supervisorID: number) {
@@ -12,7 +14,6 @@ export class BuildHierarchyTree {
         }
         return subs;
     }
-    
 
     readDataAndCreateMap(lines: any) {
         for (const items of lines) {
@@ -26,8 +27,7 @@ export class BuildHierarchyTree {
             if (+employee.supervisorID === 0)
                 this.root = employee;
         }
-        return this.employees.values();
-
+        return this.employees.values()
     }
 
     buildHierarchyTree(root: IEmployee) {
@@ -50,33 +50,36 @@ export class BuildHierarchyTree {
             this.printHierarchyTree(em, level + 1);
     }
 
-   
-    move(items:any,employeeID: number, supervisorID: Number): void {
-        const emp = items.filter((item:[Number,String,Number]) => item[0]===employeeID);
-        items.splice(items.indexOf(emp),1)
-        items.push([employeeID,emp[0][1],supervisorID])
-        return items
-    }
-    
+    move(items: any, employeeID: number, supervisorID: Number): any {
+        if (employeeID === supervisorID) {
+            return this.employees.values();
+        }
+        const buildHierarchy = new BuildHierarchyTree()
+        const dataArray: any = buildHierarchy.readDataAndCreateMap(items)
+        const emp = new Employee(dataArray.id, dataArray.text, dataArray.supervisorID, dataArray.children)
 
-    // createUiOfHierarchy(root: IEmployee, level: number) {
-    //     const list: String[] = [];
-    //     var str: String = "";
-    //     for (let i = 0; i < level; i++) {
-    //         str += "\t";
-    //         if(level===1){
-    //             str += "<ul>";
-    //         }
-    //         if (i === level - 1) {
-    //             str += "<li>";
-    //         }
-    //     }
-    //         str += root.name
-    //         // str += "</li>";
-    //         // str += "</ul>";
-    //         console.log(str);
-    //         const subs = root.children;
-    //         for (const em of subs)
-    //             this.createUiOfHierarchy(em, level + 1);
-    //     }
+        let currentPointer: any = this.history.getPointer();
+        this.history.updatePointer(currentPointer + 1);
+
+        const [data, history] = emp.move(items, employeeID, supervisorID)
+        this.history.saveListToHistory([...history])
+        return data
+    }
+
+
+    undoNodeStructure(): any {
+        let pointer: any = this.history.getPointer()
+        const history = this.history.getAllHistory()
+        return history[pointer - 1];
+    }
+    redodeStructure(): any {
+        let pointer: any = this.history.getPointer()
+        if (pointer <= this.history.getHistoryLength()) {
+            const history = this.history.getAllHistory()
+            return history[pointer + 1];
+        } else {
+            return [];
+        }
+    }
+
 }

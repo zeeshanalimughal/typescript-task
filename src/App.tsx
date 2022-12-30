@@ -3,10 +3,6 @@ import './App.css';
 import { BuildHierarchyTree } from './Employee/BuildHierarchyTree';
 import { IEmployee } from './types/employee';
 import Nestable from 'react-nestable';
-
-// this usually goes once
-// to the entry point of the whole app
-// (e.g. src/index.js)
 import 'react-nestable/dist/styles/index.css';
 
 function App() {
@@ -48,43 +44,18 @@ function App() {
 
   const tree = new BuildHierarchyTree();
   tree.readDataAndCreateMap(lines);
-  let data = tree.readDataAndCreateMap(lines);
-  data = tree.readDataAndCreateMap(tree.move(lines, 8, 6))
+  // let data = tree.readDataAndCreateMap(lines);
+  // console.log(8,data)
+
+  let data = tree.readDataAndCreateMap(tree.move(lines, 8, 5))
+  data = tree.undoNodeStructure()
+  data = tree.readDataAndCreateMap(data);
+  const itemsData = [...Array.from(data)][0]
 
   tree.buildHierarchyTree(tree.root);
-  tree.printHierarchyTree(tree.root, 0);
 
-
-  // const Ref: any = useRef(null);
-  // const List = ({ complete_data }: any) => {
-  //   return (
-  //     <ul className="list-disc">
-  //       {complete_data.map((x: IEmployee) => <Item key={x.id} data={x} />)}
-  //     </ul>
-  //   )
-  // }
-  // const exists: Number[] = []
-  // const Item = ({ data }: any) => {
-  //   if (exists.includes(data.id)) {
-  //     return (<></>)
-  //   } else {
-  //     exists.push(data.id)
-  //     return (
-  //       <li className="ml-10">
-  //         {data.name}
-  //         {data.subordinates.length > 0 && (
-  //           <ul className="list-disc">
-  //             {data.subordinates.map((x: IEmployee) => <Item key={x.id} data={x} />)}
-  //           </ul>
-  //         )}
-  //       </li>
-  //     )
-  //   }
-  // }
-
-  const items = Array.from(data).filter((value) => {
-    return value.supervisorID === 0
-  })
+  const items: any = [itemsData]
+  // console.log(items)
 
   const handlerMethod = (e: any) => {
     console.log(e)
@@ -94,15 +65,10 @@ function App() {
   const renderItem = ({ item }: any) => item.text;
   return (
     <div className="App">
-      {/* <List complete_data={Array.from(data)} /> */}
       <Nestable
         items={items}
         renderItem={renderItem}
-        maxDepth={1}
-        threshold={1}
-        // collapsed={true}
         onChange={handlerMethod}
-        group={1}
         renderCollapseIcon={() => <span>›</span>}
       />
     </div>

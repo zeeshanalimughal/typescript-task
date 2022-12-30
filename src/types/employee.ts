@@ -10,9 +10,4 @@ export  interface IEmployeeOrgApp {
     supervisorID: number;
     children: IEmployee[];
 
-    move(items:any,employeeID: number, supervisorID: number): void;
-    /** Undo last move action */
-    undo(): void;
-    /** Redo last undone action */
-    redo(): void;
 }
