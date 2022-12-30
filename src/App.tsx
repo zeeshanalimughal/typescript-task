@@ -1,30 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
 import './App.css';
+import { useState, useEffect } from 'react'
 import { BuildHierarchyTree } from './Employee/BuildHierarchyTree';
-import { IEmployee } from './types/employee';
 import Nestable from 'react-nestable';
 import 'react-nestable/dist/styles/index.css';
+import { History } from './Employee/History';
 
 function App() {
 
-  // ["Mark Zuckerberg", [
-  //   [
-  //     "Sarah Donald", [
-  //     ["Cassandra Reynolds", []]
-  //     ]
-  //   ],
-  //   [
-  //     "Tyler Simpson", [
-  //       ['Harry Tobs', []],
-  //       ["George Carrey", []],
-  //       ["Gary Styles", []],
-  //     ]
-  //   ],
-  //   ["Bruce Willis"],
-  //   ["Georgina Flangy"],
-  // ]],
-
-  const lines = [
+  const [lines, setLines] = useState([
     [1, "Mark Zuckerberg"],
     [2, "Sarah Donald", 1],
     [3, "Cassandra Reynolds", 2],
@@ -40,33 +23,33 @@ function App() {
     [13, "Bruce Willis", 1],
     [14, "Georgina Flangy", 1],
     [15, "Sophie Turner", 14]
-  ];
+  ])
 
-  const tree = new BuildHierarchyTree();
-  tree.readDataAndCreateMap(lines);
-  // let data = tree.readDataAndCreateMap(lines);
-  // console.log(8,data)
 
-  let data = tree.readDataAndCreateMap(tree.move(lines, 8, 5))
-  data = tree.undoNodeStructure()
-  data = tree.readDataAndCreateMap(data);
-  const itemsData = [...Array.from(data)][0]
-
+  const [tree, setTree] = useState(new BuildHierarchyTree());
+  const [itemsData, setItemsData]: any = useState([...Array.from(tree.readDataAndCreateMap(lines))][0])
+  const [items, setItems] = useState(itemsData)
+  const [history, setHistory]: any = useState(new History(items));
   tree.buildHierarchyTree(tree.root);
 
-  const items: any = [itemsData]
-  // console.log(items)
 
   const handlerMethod = (e: any) => {
-    console.log(e)
+    console.log(e.items);
+    history.saveListToHistory(e.items)
   }
 
+  const undo = () => {
+    setItems(history.undo())
+  }
+  const redo = () => {
+    setItems([history.redo()])
+  }
 
   const renderItem = ({ item }: any) => item.text;
   return (
     <div className="App">
       <Nestable
-        items={items}
+        items={[items]}
         renderItem={renderItem}
         onChange={handlerMethod}
         renderCollapseIcon={() => <span>›</span>}

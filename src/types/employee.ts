@@ -9,5 +9,4 @@ export  interface IEmployeeOrgApp {
     text: string;
     supervisorID: number;
     children: IEmployee[];
-
 }

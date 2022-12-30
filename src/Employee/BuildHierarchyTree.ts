@@ -1,9 +1,7 @@
 import { IEmployee } from './../types/employee';
-import { History } from './History';
 import { Employee } from './index';
 
 export class BuildHierarchyTree {
-    history = new History()
     employees: Map<number, IEmployee> = new Map();
     root: any;
     getSubsById(supervisorID: number) {
@@ -48,38 +46,6 @@ export class BuildHierarchyTree {
         var subs = root.children;
         for (const em of subs)
             this.printHierarchyTree(em, level + 1);
-    }
-
-    move(items: any, employeeID: number, supervisorID: Number): any {
-        if (employeeID === supervisorID) {
-            return this.employees.values();
-        }
-        const buildHierarchy = new BuildHierarchyTree()
-        const dataArray: any = buildHierarchy.readDataAndCreateMap(items)
-        const emp = new Employee(dataArray.id, dataArray.text, dataArray.supervisorID, dataArray.children)
-
-        let currentPointer: any = this.history.getPointer();
-        this.history.updatePointer(currentPointer + 1);
-
-        const [data, history] = emp.move(items, employeeID, supervisorID)
-        this.history.saveListToHistory([...history])
-        return data
-    }
-
-
-    undoNodeStructure(): any {
-        let pointer: any = this.history.getPointer()
-        const history = this.history.getAllHistory()
-        return history[pointer - 1];
-    }
-    redodeStructure(): any {
-        let pointer: any = this.history.getPointer()
-        if (pointer <= this.history.getHistoryLength()) {
-            const history = this.history.getAllHistory()
-            return history[pointer + 1];
-        } else {
-            return [];
-        }
     }
 
 }
