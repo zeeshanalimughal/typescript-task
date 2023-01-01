@@ -2,17 +2,12 @@ export class History {
     history: any = [];
     pointer: any = 0;
 
-    public constructor(state: any) {
-        this.history.push(state);
+    public constructor(state?: any) {
+        this.history.push([state]);
     }
     saveListToHistory(state: any): void {
         this.history.push(state)
         this.pointer++
-    }
-
-    current() {
-        console.log(this.pointer, this.history[this.pointer])
-        return this.history[this.pointer];
     }
 
     undo() {

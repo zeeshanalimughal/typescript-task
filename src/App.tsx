@@ -28,13 +28,18 @@ function App() {
 
   const [tree, setTree] = useState(new BuildHierarchyTree());
   const [itemsData, setItemsData]: any = useState([...Array.from(tree.readDataAndCreateMap(lines))][0])
-  const [items, setItems] = useState(itemsData)
+  const [items, setItems] :any= useState([])
   const [history, setHistory]: any = useState(new History(items));
   tree.buildHierarchyTree(tree.root);
 
+  useEffect(() =>{
+  setItems([Array.from(tree?.employees)[0][1]])
+  history.history[0] = [Array.from(tree?.employees)[0][1]]
+  },[])
+
+  
 
   const handlerMethod = (e: any) => {
-    console.log(e.items);
     history.saveListToHistory(e.items)
   }
 
@@ -42,18 +47,20 @@ function App() {
     setItems(history.undo())
   }
   const redo = () => {
-    setItems([history.redo()])
+    setItems(history.redo())
   }
 
   const renderItem = ({ item }: any) => item.text;
   return (
     <div className="App">
       <Nestable
-        items={[items]}
+        items={items}
         renderItem={renderItem}
         onChange={handlerMethod}
         renderCollapseIcon={() => <span>›</span>}
       />
+      <button onClick={undo}>Undo</button>
+      <button onClick={redo}>Redo</button>
     </div>
   );
 }
