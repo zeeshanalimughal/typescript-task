@@ -1,16 +1,15 @@
 import { IEmployee } from './../types/employee';
 import { IEmployeeOrgApp } from "../types/employee";
-import { History } from './History';
 
 export class Employee implements IEmployeeOrgApp {
     id: number;
-    text: string;
+    name: string;
     supervisorID: number;
     children: IEmployee[];
 
-    constructor(id: any, text: string, supervisorID: number, children: IEmployee[]) {
+    constructor(id: any, name: string, supervisorID: number, children: IEmployee[]) {
         this.id = id;
-        this.text = text;
+        this.name = name;
         this.supervisorID = supervisorID;
         this.children = children;
     }

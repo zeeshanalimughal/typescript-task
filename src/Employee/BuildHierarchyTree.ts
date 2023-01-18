@@ -37,15 +37,5 @@ export class BuildHierarchyTree {
         for (const em of subs)
             this.buildHierarchyTree(em);
     }
-    printHierarchyTree(root: IEmployee, level: number) {
-        var str: String = "";
-        for (let i = 0; i < level; i++)
-            str += "\t";
-        str += root.text
-        // console.log(str);
-        var subs = root.children;
-        for (const em of subs)
-            this.printHierarchyTree(em, level + 1);
-    }
 
 }

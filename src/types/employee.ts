@@ -1,12 +1,12 @@
 export interface IEmployee {
     id: number;
-    text: string;
+    name: string;
     supervisorID: number;
     children: IEmployee[];
 }
-export  interface IEmployeeOrgApp {
+export interface IEmployeeOrgApp {
     id: number;
-    text: string;
+    name: string;
     supervisorID: number;
     children: IEmployee[];
 }
